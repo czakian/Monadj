@@ -1,0 +1,56 @@
+<project>
+
+  <property name="src.dir" value="src"/>
+  <property name="docs.dir" value="build/javadocs/"/>
+  <property name="src.test" value="tst"/>
+  <property name="build.classes" value="build/classes"/>
+  <property name="build.jars" value="build/jar"/>
+  <property name="deps.jars" value="jars"/>
+
+   <path id="classpath">
+     <fileset dir="${deps.jars}">
+        <include name="*.jar"/>
+      </fileset>
+      <fileset dir="${build.jars}">
+        <include name="*.jar"/>
+      </fileset>
+   </path>
+
+  <target name="clean">
+    <delete dir="build"/>
+  </target>
+
+  <target name="compile">
+    <mkdir dir="build/classes"/>
+    <mkdir dir="build/jar"/>
+    <javac classpathref="classpath" includeantruntime="false" srcdir="src" destdir="build/classes"/>
+    <javac classpathref="classpath" includeantruntime="false" srcdir="tst" destdir="build/classes"/>
+  </target>
+
+  <target name="jar" depends="compile">
+    <mkdir dir="build/jar"/>
+    <jar destfile="build/jar/Monadj.jar" basedir="build/classes"/>
+  </target>
+
+  <target name="docs" depends="compile">
+    <mkdir dir="${docs.dir}"/>
+    <javadoc sourcepath="${src.dir}" destdir="${docs.dir}"/>
+  </target> 
+
+  <target name="test" depends="jar">
+
+    <junit printsummary="withOutAndErr" showoutput="true" haltonfailure="yes">
+      <classpath refid="classpath"/>
+
+      <formatter usefile="false" type="plain"/>
+
+      <batchtest fork="yes">
+        <fileset dir="${src.test}">
+          <include name="**/*Test*.java"/>
+        </fileset>
+      </batchtest>
+
+    </junit>
+  </target>
+
+</project>
